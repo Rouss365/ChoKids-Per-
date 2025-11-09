@@ -6,8 +6,8 @@
 <title>Lonchera Inteligente Perú</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #fff8e1, #ffe0b2);
+    font-family: 'Comic Sans MS', Arial, sans-serif;
+    background: linear-gradient(to bottom, #fffde7, #ffe0b2);
     margin: 0;
     padding: 0;
   }
@@ -16,19 +16,19 @@
     margin: auto;
     padding: 15px;
   }
-  h1, h2 { text-align: center; color: #ff9800; }
+  h1, h2 { text-align: center; color: #ff6f00; }
   section {
     background: #fff3e0;
     padding: 15px;
     margin: 15px 0;
-    border-radius: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    box-shadow: 0 3px 7px rgba(0,0,0,0.15);
   }
   input, select, button {
     width: 100%;
     padding: 12px;
     margin: 8px 0;
-    border-radius: 10px;
+    border-radius: 15px;
     border: 1px solid #ffcc80;
     font-size: 16px;
   }
@@ -37,26 +37,30 @@
     color: white;
     border: none;
     cursor: pointer;
+    font-weight: bold;
   }
   button:hover { background-color: #fb8c00; }
   .recipe-card {
-    border: 1px solid #ffcc80;
-    border-radius: 10px;
+    border: 2px solid #ffcc80;
+    border-radius: 15px;
     padding: 10px;
     margin-bottom: 12px;
     background-color: #fff8f0;
+    text-align: center;
   }
   .recipe-card img {
     width: 100%;
     border-radius: 10px;
     margin-bottom: 8px;
   }
-  .recipe-card button {
-    margin-top: 8px;
-  }
   #profileList button {
     width: 48%;
     margin: 2% 1% 8px 1%;
+  }
+  .warning {
+    color: red;
+    font-weight: bold;
+    text-align: center;
   }
 </style>
 </head>
@@ -99,11 +103,92 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const PERU_RECIPES = [
-  { name: "Taco andino rápido", timeMin: 10, cho: 24, ingredients: "Tortilla de quinua, pollo, palta", img: "https://i.imgur.com/1Zt2z8O.jpg" },
-  { name: "Ensalada tibia de quinoa", timeMin: 15, cho: 23, ingredients: "Quinua, verduras locales, huevo", img: "https://i.imgur.com/7s6yL9v.jpg" },
-  { name: "Lonchera camote + huevo", timeMin: 12, cho: 20, ingredients: "Camote hervido, huevo duro", img: "https://i.imgur.com/ZJq5aG9.jpg" },
-  { name: "Plátano con queso fresco", timeMin: 2, cho: 12, ingredients: "1 plátano, 30g queso fresco", img: "https://i.imgur.com/B9jD5bf.jpg" },
-  { name: "Mini-sándwich integral de pollo", timeMin: 8, cho: 19, ingredients: "Pan integral, pollo, tomate", img: "https://i.imgur.com/9F7Q9Wp.jpg" }
+  {
+    name: "Taco andino rápido",
+    timeMin: 10,
+    cho: 24,
+    img: "https://i.imgur.com/6r8g9QO.jpg",
+    ingredients: [
+      { name: "Tortilla de quinua", qty: "50 g" },
+      { name: "Pollo cocido", qty: "40 g" },
+      { name: "Palta", qty: "30 g" }
+    ],
+    steps: [
+      "Calienta la tortilla de quinua durante 30 segundos.",
+      "Corta el pollo cocido en tiras pequeñas y colócalo sobre la tortilla.",
+      "Añade la palta en rodajas.",
+      "Enrolla la tortilla formando un taco.",
+      "Listo para llevar en la lonchera."
+    ]
+  },
+  {
+    name: "Ensalada tibia de quinoa",
+    timeMin: 15,
+    cho: 23,
+    img: "https://i.imgur.com/eH3pZ8L.jpg",
+    ingredients: [
+      { name: "Quinua cocida", qty: "60 g" },
+      { name: "Verduras locales", qty: "50 g" },
+      { name: "Huevo duro", qty: "1 unidad (50 g)" }
+    ],
+    steps: [
+      "Hierve la quinua durante 15 minutos.",
+      "Saltea las verduras en una sartén con poco aceite.",
+      "Agrega la quinua y mezcla con las verduras.",
+      "Corta el huevo duro en rodajas y agrégalo.",
+      "Sirve tibia en la lonchera."
+    ]
+  },
+  {
+    name: "Lonchera camote + huevo",
+    timeMin: 12,
+    cho: 20,
+    img: "https://i.imgur.com/Ofh5N7A.jpg",
+    ingredients: [
+      { name: "Camote hervido", qty: "100 g" },
+      { name: "Huevo duro", qty: "1 unidad (50 g)" }
+    ],
+    steps: [
+      "Hierve el camote durante 10 minutos hasta que esté suave.",
+      "Hierve el huevo durante 10 minutos.",
+      "Pela y corta el camote en trozos medianos.",
+      "Pela y corta el huevo en rodajas.",
+      "Coloca todo en un recipiente para lonchera."
+    ]
+  },
+  {
+    name: "Plátano con queso fresco",
+    timeMin: 2,
+    cho: 12,
+    img: "https://i.imgur.com/wTg8H6x.jpg",
+    ingredients: [
+      { name: "Plátano", qty: "1 unidad mediana" },
+      { name: "Queso fresco", qty: "30 g" }
+    ],
+    steps: [
+      "Pela el plátano y córtalo en rodajas.",
+      "Corta el queso fresco en cubos.",
+      "Mezcla plátano y queso en un recipiente pequeño.",
+      "Listo para llevar."
+    ]
+  },
+  {
+    name: "Mini-sándwich integral de pollo",
+    timeMin: 8,
+    cho: 19,
+    img: "https://i.imgur.com/5VRM1t9.jpg",
+    ingredients: [
+      { name: "Pan integral", qty: "2 rebanadas (40 g)" },
+      { name: "Pollo cocido", qty: "40 g" },
+      { name: "Tomate", qty: "20 g" }
+    ],
+    steps: [
+      "Coloca el pollo sobre una rebanada de pan integral.",
+      "Añade rodajas de tomate.",
+      "Cubre con la otra rebanada de pan.",
+      "Corta en mini-sándwiches y coloca en la lonchera."
+    ]
+  }
 ];
 
 let profiles = JSON.parse(localStorage.getItem("lonchera_perfiles")) || [];
@@ -156,39 +241,92 @@ function clearProfiles() {
 function generateSuggestions() {
   const time = Number(document.getElementById("timeAvailable").value);
   const glucose = Number(document.getElementById("glucose").value);
-  const filtered = PERU_RECIPES.filter(r => r.timeMin <= time);
   const suggestionsDiv = document.getElementById("suggestions");
   suggestionsDiv.innerHTML = "";
 
   if(glucose < 80) {
     const warn = document.createElement("p");
-    warn.style.color = "red";
-    warn.style.fontWeight = "bold";
+    warn.className = "warning";
     warn.textContent = "Glucemia baja (HIPO). Proporciónale 10–15 g CHO rápido: jugo de naranja o 1/2 plátano.";
     suggestionsDiv.appendChild(warn);
   }
 
+  const filtered = PERU_RECIPES.filter(r => r.timeMin <= time);
+  const profileIndex = Number(profileSelect.value);
+  const profileWeight = profileIndex >=0 ? profiles[profileIndex].weight : 30;
+  const factor = profileWeight / 30; // ajuste por peso
+
   filtered.forEach(r => {
     const div = document.createElement("div");
     div.className = "recipe-card";
-    div.innerHTML = `<img src="${r.img}" alt="${r.name}"><strong>${r.name}</strong><br>Tiempo: ${r.timeMin} min | CHO: ${r.cho} g<br>Ingredientes: ${r.ingredients}`;
+    div.innerHTML = `<img src="${r.img}" alt="${r.name}"><strong>${r.name}</strong><br>Tiempo: ${r.timeMin} min | CHO: ${Math.round(r.cho*factor)} g`;
+
+    const adjustedIngredients = r.ingredients.map(ing => {
+      const match = ing.qty.match(/(\d+)\s*g/);
+      if(match){
+        const grams = Number(match[1]) * factor;
+        return { name: ing.name, qty: `${Math.round(grams)} g` };
+      }
+      return ing;
+    });
+
+    const ingList = document.createElement("ul");
+    adjustedIngredients.forEach(ing => {
+      const li = document.createElement("li");
+      li.textContent = `${ing.qty} de ${ing.name}`;
+      ingList.appendChild(li);
+    });
+    div.appendChild(ingList);
+
+    const stepsList = document.createElement("ol");
+    r.steps.forEach(step => {
+      const li = document.createElement("li");
+      li.textContent = step;
+      stepsList.appendChild(li);
+    });
+    div.appendChild(stepsList);
+
     const pdfBtn = document.createElement("button");
     pdfBtn.textContent = "Generar PDF";
-    pdfBtn.onclick = () => generatePDF(r);
+    pdfBtn.onclick = () => generatePDF(r, profileWeight, factor);
     div.appendChild(pdfBtn);
     suggestionsDiv.appendChild(div);
   });
 }
 
-function generatePDF(recipe) {
+function generatePDF(recipe, weight=30, factor=1) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  doc.text("Lonchera Inteligente Perú", 10, 10);
+
   const profileIndex = Number(profileSelect.value);
-  if(profileIndex >= 0) doc.text(`Niño(a): ${profiles[profileIndex].name}`, 10, 20);
+  const profileName = profileIndex >= 0 ? profiles[profileIndex].name : "Niño(a)";
+
+  const adjustedIngredients = recipe.ingredients.map(ing => {
+    const match = ing.qty.match(/(\d+)\s*g/);
+    if(match){
+      const grams = Number(match[1]) * factor;
+      return { name: ing.name, qty: `${Math.round(grams)} g` };
+    }
+    return ing;
+  });
+
+  doc.setFontSize(16);
+  doc.text("Lonchera Inteligente Perú", 10, 10);
+  doc.setFontSize(12);
+  doc.text(`Niño(a): ${profileName}`, 10, 20);
   doc.text(`Receta: ${recipe.name}`, 10, 30);
-  doc.text(`Tiempo: ${recipe.timeMin} min | CHO: ${recipe.cho} g`, 10, 40);
-  doc.text(`Ingredientes: ${recipe.ingredients}`, 10, 50);
+  doc.text(`Tiempo: ${recipe.timeMin} min | CHO: ${Math.round(recipe.cho*factor)} g`, 10, 40);
+
+  doc.text("Ingredientes:", 10, 50);
+  adjustedIngredients.forEach((ing, i) => {
+    doc.text(`- ${ing.qty} de ${ing.name}`, 12, 60 + i*10);
+  });
+
+  doc.text("Preparación:", 10, 60 + adjustedIngredients.length*10);
+  recipe.steps.forEach((step, i) => {
+    doc.text(`${i+1}. ${step}`, 12, 70 + adjustedIngredients.length*10 + i*10);
+  });
+
   doc.save(`${recipe.name}.pdf`);
 }
 
