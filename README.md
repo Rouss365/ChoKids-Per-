@@ -1,1 +1,1 @@
-# ChoKids-Per-
+# ChoKids-Perú-
