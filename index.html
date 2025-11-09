@@ -1,169 +1,199 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lonchera Inteligente Perú</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #fff8e1; margin: 0; padding: 0;}
-    .container { max-width: 900px; margin: auto; padding: 20px; }
-    h1 { color: #ff9800; }
-    section { background: #fff3e0; padding: 15px; margin-bottom: 20px; border-radius: 10px; }
-    input, select, button { padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; }
-    button { background-color: #ff9800; color: white; border: none; cursor: pointer; }
-    button:hover { background-color: #fb8c00; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ffcc80; padding: 8px; text-align: left; }
-    th { background-color: #ffe0b2; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lonchera Inteligente Perú</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #fff8e1, #ffe0b2);
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 500px;
+    margin: auto;
+    padding: 15px;
+  }
+  h1, h2 { text-align: center; color: #ff9800; }
+  section {
+    background: #fff3e0;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border: 1px solid #ffcc80;
+    font-size: 16px;
+  }
+  button {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  button:hover { background-color: #fb8c00; }
+  .recipe-card {
+    border: 1px solid #ffcc80;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 12px;
+    background-color: #fff8f0;
+  }
+  .recipe-card img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .recipe-card button {
+    margin-top: 8px;
+  }
+  #profileList button {
+    width: 48%;
+    margin: 2% 1% 8px 1%;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Lonchera Inteligente Perú</h1>
 
-    <!-- PERFIL DEL NIÑO -->
-    <section>
-      <h2>Perfiles de niños</h2>
-      <input type="text" id="name" placeholder="Nombre">
-      <input type="number" id="age" placeholder="Edad">
-      <input type="number" id="weight" placeholder="Peso (kg)">
-      <button onclick="saveProfile()">Guardar perfil</button>
-      <button onclick="clearProfiles()">Borrar todos los perfiles</button>
+<div class="container">
+  <h1>Lonchera Inteligente Perú</h1>
 
-      <div id="profileList"></div>
-    </section>
+  <!-- PERFIL DEL NIÑO -->
+  <section>
+    <h2>Perfiles de niños</h2>
+    <input type="text" id="name" placeholder="Nombre">
+    <input type="number" id="age" placeholder="Edad">
+    <input type="number" id="weight" placeholder="Peso (kg)">
+    <button onclick="saveProfile()">Guardar perfil</button>
+    <button onclick="clearProfiles()">Borrar todos los perfiles</button>
+    <div id="profileList"></div>
+  </section>
 
-    <!-- CONDICIÓN ACTUAL -->
-    <section>
-      <h2>Condición actual</h2>
-      <select id="selectedProfile"></select>
-      <input type="number" id="glucose" placeholder="Glucemia (mg/dL)">
-      <select id="timeAvailable">
-        <option value="5">0–5 min</option>
-        <option value="10">5–15 min</option>
-        <option value="20">15–30 min</option>
-      </select>
-      <button onclick="generateSuggestions()">Sugerir lonchera</button>
-    </section>
+  <!-- CONDICIÓN ACTUAL -->
+  <section>
+    <h2>Condición actual</h2>
+    <select id="selectedProfile"></select>
+    <input type="number" id="glucose" placeholder="Glucemia (mg/dL)">
+    <select id="timeAvailable">
+      <option value="5">0–5 min</option>
+      <option value="10">5–15 min</option>
+      <option value="20">15–30 min</option>
+    </select>
+    <button onclick="generateSuggestions()">Sugerir lonchera</button>
+  </section>
 
-    <!-- SUGERENCIAS -->
-    <section>
-      <h2>Sugerencias de lonchera</h2>
-      <div id="suggestions"></div>
-    </section>
-  </div>
+  <!-- SUGERENCIAS -->
+  <section>
+    <h2>Sugerencias de lonchera</h2>
+    <div id="suggestions"></div>
+  </section>
+</div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script>
-    // Recetas peruanas
-    const PERU_RECIPES = [
-      { name: "Taco andino rápido", timeMin: 10, cho: 24, ingredients: "Tortilla de quinua, pollo desmenuzado, palta" },
-      { name: "Ensalada tibia de quinoa", timeMin: 15, cho: 23, ingredients: "Quinua, verduras locales, huevo" },
-      { name: "Lonchera camote + huevo", timeMin: 12, cho: 20, ingredients: "Camote hervido, huevo duro" },
-      { name: "Plátano con queso fresco", timeMin: 2, cho: 12, ingredients: "1 plátano, 30g queso fresco" },
-      { name: "Mini-sándwich integral de pollo", timeMin: 8, cho: 19, ingredients: "Pan integral, pollo, tomate" },
-      { name: "Humita en olla", timeMin: 15, cho: 22, ingredients: "Humita, choclo, queso fresco" },
-      { name: "Bocaditos de pallares", timeMin: 10, cho: 18, ingredients: "Pallares cocidos, huevo, hierbas" },
-      { name: "Arroz integral con verduras", timeMin: 15, cho: 25, ingredients: "Arroz integral, zanahoria, arveja" },
-      { name: "Yogur con fruta local", timeMin: 3, cho: 14, ingredients: "Yogur natural, plátano o papaya" },
-      { name: "Batido de lúcuma", timeMin: 5, cho: 20, ingredients: "Leche, lúcuma, avena" },
-      { name: "Arepitas de maíz", timeMin: 12, cho: 19, ingredients: "Harina de maíz, huevo, queso fresco" },
-      { name: "Ensalada de palta y huevo", timeMin: 5, cho: 15, ingredients: "Palta, huevo duro, tomate" },
-      { name: "Camote al horno con queso", timeMin: 15, cho: 22, ingredients: "Camote, queso fresco, orégano" },
-      { name: "Bocaditos de quinua y verduras", timeMin: 10, cho: 20, ingredients: "Quinua, zanahoria, arveja" },
-      { name: "Pan integral con palta y pollo", timeMin: 8, cho: 21, ingredients: "Pan integral, palta, pollo"}
-    ];
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const PERU_RECIPES = [
+  { name: "Taco andino rápido", timeMin: 10, cho: 24, ingredients: "Tortilla de quinua, pollo, palta", img: "https://i.imgur.com/1Zt2z8O.jpg" },
+  { name: "Ensalada tibia de quinoa", timeMin: 15, cho: 23, ingredients: "Quinua, verduras locales, huevo", img: "https://i.imgur.com/7s6yL9v.jpg" },
+  { name: "Lonchera camote + huevo", timeMin: 12, cho: 20, ingredients: "Camote hervido, huevo duro", img: "https://i.imgur.com/ZJq5aG9.jpg" },
+  { name: "Plátano con queso fresco", timeMin: 2, cho: 12, ingredients: "1 plátano, 30g queso fresco", img: "https://i.imgur.com/B9jD5bf.jpg" },
+  { name: "Mini-sándwich integral de pollo", timeMin: 8, cho: 19, ingredients: "Pan integral, pollo, tomate", img: "https://i.imgur.com/9F7Q9Wp.jpg" }
+];
 
-    // Cargar perfiles de localStorage
-    let profiles = JSON.parse(localStorage.getItem("lonchera_perfiles")) || [];
-    const profileSelect = document.getElementById("selectedProfile");
-    const profileListDiv = document.getElementById("profileList");
+let profiles = JSON.parse(localStorage.getItem("lonchera_perfiles")) || [];
+const profileSelect = document.getElementById("selectedProfile");
+const profileListDiv = document.getElementById("profileList");
 
-    function refreshProfiles() {
-      profileSelect.innerHTML = "";
-      profileListDiv.innerHTML = "";
-      profiles.forEach((p, i) => {
-        let option = document.createElement("option");
-        option.value = i;
-        option.textContent = `${p.name} (${p.age} años)`;
-        profileSelect.appendChild(option);
+function refreshProfiles() {
+  profileSelect.innerHTML = "";
+  profileListDiv.innerHTML = "";
+  profiles.forEach((p,i) => {
+    let option = document.createElement("option");
+    option.value = i;
+    option.textContent = `${p.name} (${p.age} años)`;
+    profileSelect.appendChild(option);
 
-        let btn = document.createElement("button");
-        btn.textContent = `Cargar ${p.name}`;
-        btn.onclick = () => loadProfile(i);
-        profileListDiv.appendChild(btn);
-      });
-    }
+    let btn = document.createElement("button");
+    btn.textContent = `Cargar ${p.name}`;
+    btn.onclick = () => loadProfile(i);
+    profileListDiv.appendChild(btn);
+  });
+}
 
-    function saveProfile() {
-      const name = document.getElementById("name").value;
-      const age = Number(document.getElementById("age").value);
-      const weight = Number(document.getElementById("weight").value);
-      if (!name || !age || !weight) { alert("Completa todos los datos"); return; }
-      profiles.push({ name, age, weight });
-      localStorage.setItem("lonchera_perfiles", JSON.stringify(profiles));
-      refreshProfiles();
-      alert("Perfil guardado");
-    }
+function saveProfile() {
+  const name = document.getElementById("name").value;
+  const age = Number(document.getElementById("age").value);
+  const weight = Number(document.getElementById("weight").value);
+  if(!name || !age || !weight) { alert("Completa todos los datos"); return; }
+  profiles.push({ name, age, weight });
+  localStorage.setItem("lonchera_perfiles", JSON.stringify(profiles));
+  refreshProfiles();
+  alert("Perfil guardado");
+}
 
-    function loadProfile(index) {
-      const p = profiles[index];
-      document.getElementById("name").value = p.name;
-      document.getElementById("age").value = p.age;
-      document.getElementById("weight").value = p.weight;
-      profileSelect.value = index;
-    }
+function loadProfile(index) {
+  const p = profiles[index];
+  document.getElementById("name").value = p.name;
+  document.getElementById("age").value = p.age;
+  document.getElementById("weight").value = p.weight;
+  profileSelect.value = index;
+}
 
-    function clearProfiles() {
-      if(confirm("Eliminar todos los perfiles?")) {
-        profiles = [];
-        localStorage.removeItem("lonchera_perfiles");
-        refreshProfiles();
-      }
-    }
-
-    function generateSuggestions() {
-      const time = Number(document.getElementById("timeAvailable").value);
-      const glucose = Number(document.getElementById("glucose").value);
-      const filtered = PERU_RECIPES.filter(r => r.timeMin <= time);
-      const suggestionsDiv = document.getElementById("suggestions");
-      suggestionsDiv.innerHTML = "";
-
-      if (glucose < 80) {
-        const warn = document.createElement("p");
-        warn.style.color = "red";
-        warn.textContent = "Glucemia baja (HIPO). Proporciónale 10–15 g CHO rápido: jugo de naranja o 1/2 plátano.";
-        suggestionsDiv.appendChild(warn);
-      }
-
-      filtered.forEach(r => {
-        const div = document.createElement("div");
-        div.style.border = "1px solid #ffcc80";
-        div.style.padding = "10px";
-        div.style.marginBottom = "10px";
-        div.innerHTML = `<strong>${r.name}</strong><br>Tiempo: ${r.timeMin} min | CHO: ${r.cho} g<br>Ingredientes: ${r.ingredients}`;
-        const pdfBtn = document.createElement("button");
-        pdfBtn.textContent = "Generar PDF";
-        pdfBtn.onclick = () => generatePDF(r);
-        div.appendChild(document.createElement("br"));
-        div.appendChild(pdfBtn);
-        suggestionsDiv.appendChild(div);
-      });
-    }
-
-    function generatePDF(recipe) {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.text("Lonchera Inteligente Perú", 10, 10);
-      const profileIndex = Number(profileSelect.value);
-      if(profileIndex >= 0) doc.text(`Niño(a): ${profiles[profileIndex].name}`, 10, 20);
-      doc.text(`Receta: ${recipe.name}`, 10, 30);
-      doc.text(`Tiempo: ${recipe.timeMin} min | CHO: ${recipe.cho} g`, 10, 40);
-      doc.text(`Ingredientes: ${recipe.ingredients}`, 10, 50);
-      doc.save(`${recipe.name}.pdf`);
-    }
-
+function clearProfiles() {
+  if(confirm("Eliminar todos los perfiles?")) {
+    profiles = [];
+    localStorage.removeItem("lonchera_perfiles");
     refreshProfiles();
-  </script>
+  }
+}
+
+function generateSuggestions() {
+  const time = Number(document.getElementById("timeAvailable").value);
+  const glucose = Number(document.getElementById("glucose").value);
+  const filtered = PERU_RECIPES.filter(r => r.timeMin <= time);
+  const suggestionsDiv = document.getElementById("suggestions");
+  suggestionsDiv.innerHTML = "";
+
+  if(glucose < 80) {
+    const warn = document.createElement("p");
+    warn.style.color = "red";
+    warn.style.fontWeight = "bold";
+    warn.textContent = "Glucemia baja (HIPO). Proporciónale 10–15 g CHO rápido: jugo de naranja o 1/2 plátano.";
+    suggestionsDiv.appendChild(warn);
+  }
+
+  filtered.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "recipe-card";
+    div.innerHTML = `<img src="${r.img}" alt="${r.name}"><strong>${r.name}</strong><br>Tiempo: ${r.timeMin} min | CHO: ${r.cho} g<br>Ingredientes: ${r.ingredients}`;
+    const pdfBtn = document.createElement("button");
+    pdfBtn.textContent = "Generar PDF";
+    pdfBtn.onclick = () => generatePDF(r);
+    div.appendChild(pdfBtn);
+    suggestionsDiv.appendChild(div);
+  });
+}
+
+function generatePDF(recipe) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.text("Lonchera Inteligente Perú", 10, 10);
+  const profileIndex = Number(profileSelect.value);
+  if(profileIndex >= 0) doc.text(`Niño(a): ${profiles[profileIndex].name}`, 10, 20);
+  doc.text(`Receta: ${recipe.name}`, 10, 30);
+  doc.text(`Tiempo: ${recipe.timeMin} min | CHO: ${recipe.cho} g`, 10, 40);
+  doc.text(`Ingredientes: ${recipe.ingredients}`, 10, 50);
+  doc.save(`${recipe.name}.pdf`);
+}
+
+refreshProfiles();
+</script>
+
 </body>
 </html>
